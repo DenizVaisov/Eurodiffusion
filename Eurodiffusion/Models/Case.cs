@@ -1,29 +1,53 @@
-﻿using System.Collections.Generic;
+﻿using Eurodiffusion.Models;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Eurodiffusion
 {
-    public static class Case
+    public class Case
     {
-        private static List<Country> Countries { get; set; } = new();
-        
-        private static bool isComplete = false;
+        private List<Country> Countries { get; set; } = new();
 
-        public static void AddCountry(Country country)
-           => Countries.Add(country);
+        public void AddCountry(Country country)
+        {
+            foreach (var oldCountry in Countries)
+                oldCountry.AddRelationBetweenCities(country);
 
-        public static void StartCoinsTransfer() 
+            Countries.Add(country);
+        }
+
+        public void StartCoinsTransfer() 
         {
             int iterations = 0;
-            bool allCountryComplete = false;
+            bool isAllCountryComplete = false;
 
-            while (!allCountryComplete)
+            while (!isAllCountryComplete)
             {
-                allCountryComplete = true;
-                foreach(var country in Countries)
-                {
+                isAllCountryComplete = true;
 
-                }
+                foreach (var country in Countries)
+                    isAllCountryComplete &= country.CountryIsComplete(Countries.Count, iterations);
+
+                if (isAllCountryComplete)
+                    break;
+
+                foreach (var country in Countries)
+                    country.StartCityCoinPortion();
+
+                foreach (var country in Countries)
+                    country.SendCoinsToNeighborCity();
+
+                iterations++;
             }
+        }
+
+        public List<Country> GetSortedByName()
+        {
+            CountryComparer compareCounty = new();
+            var countries = Countries.ToList();
+            countries.Sort(compareCounty);
+
+            return countries;
         }
     }
 }

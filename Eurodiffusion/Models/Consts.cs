@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Eurodiffusion
+﻿namespace Eurodiffusion
 {
     public static class Consts
     {
