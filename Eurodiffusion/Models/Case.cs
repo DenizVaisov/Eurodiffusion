@@ -8,17 +8,24 @@ namespace Eurodiffusion
     {
         private List<Country> Countries { get; set; } = new();
 
+        /// <summary>
+        /// Добавление страны
+        /// </summary>
+        /// <param name="country"></param>
         public void AddCountry(Country country)
         {
-            foreach (var oldCountry in Countries)
-                oldCountry.AddRelationBetweenCities(country);
+            foreach (var createdCountry in Countries)
+                createdCountry.AddRelationBetweenCities(country);
 
             Countries.Add(country);
         }
 
+        /// <summary>
+        /// Начало передачи монет
+        /// </summary>
         public void StartCoinsTransfer() 
         {
-            int iterations = 0;
+            int dayToCompleteCountry = 0;
             bool isAllCountryComplete = false;
 
             while (!isAllCountryComplete)
@@ -26,7 +33,7 @@ namespace Eurodiffusion
                 isAllCountryComplete = true;
 
                 foreach (var country in Countries)
-                    isAllCountryComplete &= country.CountryIsComplete(Countries.Count, iterations);
+                    isAllCountryComplete &= country.IsComplete(Countries.Count, dayToCompleteCountry);
 
                 if (isAllCountryComplete)
                     break;
@@ -37,10 +44,14 @@ namespace Eurodiffusion
                 foreach (var country in Countries)
                     country.SendCoinsToNeighborCity();
 
-                iterations++;
+                dayToCompleteCountry++;
             }
         }
 
+        /// <summary>
+        /// Сортировка стран по дням выполнения и по алфавиту если количество дней одинаковое
+        /// </summary>
+        /// <returns></returns>
         public List<Country> GetSortedByName()
         {
             CountryComparer compareCounty = new();

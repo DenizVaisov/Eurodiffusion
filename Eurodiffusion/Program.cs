@@ -18,56 +18,92 @@ namespace Eurodiffusion
 
         static void ReadInputData()
         {
-            using (var file = new StreamReader(/*@"..\..\Data\input.txt"*/ "C:\\С#_projects\\Eurodiffusion\\Eurodiffusion\\Data\\input.txt"))
+            try
             {
-                var str = file.ReadLine();
-
-                while(str != null)
+                using (var file = new StreamReader(Consts.pathToInputData))
                 {
-                    if (!int.TryParse(str, out int countCountry))
+                    var str = file.ReadLine();
+
+                    while (str != null)
                     {
-                        Console.WriteLine("Нет данных");
-                        return;
-                    }
+                        // Вначале считываем кол-во стран
 
-                    if (countCountry == 0)
-                        break;
-
-                    Case currentCase = new();
-                    for (int i = 0; i < countCountry; i++)
-                    {
-                        var data = file.ReadLine().Split(' ').Where(str => str.Length > 0).ToList();
-                        string name = data[0];
-
-                        var countryCoords = new CountryRectangle
+                        if (!int.TryParse(str, out int countCountry))
                         {
-                            xl = int.Parse(data[1]),
-                            yl = int.Parse(data[2]),
-                            xh = int.Parse(data[3]),
-                            yh = int.Parse(data[4]),
-                        };
+                            Console.WriteLine("Нет данных");
+                            return;
+                        }
 
-                        currentCase.AddCountry(new Country(name, countryCoords));
+                        if (countCountry == 0 && countCountry <= Consts.maxNumberOfCountries)
+                            break;
+
+                        Case currentCase = new();
+                        for (int i = 0; i < countCountry; i++)
+                        {
+                            // Считываем след строку - получаем массив строк
+                            var data = file.ReadLine().Split(' ').Where(str => str.Length > 0).ToList();
+                            string name = data[0];
+
+                            var countryCoords = new CountryRectangle
+                            {
+                                xl = int.Parse(data[1]),
+                                yl = int.Parse(data[2]),
+                                xh = int.Parse(data[3]),
+                                yh = int.Parse(data[4]),
+                            };
+
+                            currentCase.AddCountry(new Country(name, countryCoords));
+                        }
+
+                        Cases.Add(currentCase);
+                        str = file.ReadLine();
                     }
-
-                    Cases.Add(currentCase);
-                    str = file.ReadLine();
                 }
+            }
+
+            catch(FileNotFoundException)
+            {
+                Console.WriteLine("Файл не найден");
+                return;
+            }
+
+            finally
+            {
+                Console.WriteLine();
             }
         }
 
         static void StartEurodiffusionCase()
         {
-            int iteration = 1;
-            foreach (var currentCase in Cases)
+            try
             {
-                currentCase.StartCoinsTransfer();
-                var countriesResult = currentCase.GetSortedByName();
-                Console.WriteLine($"Case Number {iteration}");
-                foreach (var country in countriesResult)
-                    Console.WriteLine($"{country.Name} {country.Iterations}");
+                int iteration = 1;
 
-                iteration++;
+                using (StreamWriter writer = new StreamWriter(Consts.pathToOutputData))
+                {
+
+                    foreach (var currentCase in Cases)
+                    {
+                        currentCase.StartCoinsTransfer();
+                        var countriesResult = currentCase.GetSortedByName();
+
+                        writer.WriteLine($"Case Number {iteration}");
+                        foreach (var country in countriesResult)
+                            writer.WriteLine($"\t {country.Name} {country.DaysToComplete}");
+
+                        iteration++;
+                    }
+                }
+            }
+
+            catch (FileNotFoundException)
+            {
+                Console.WriteLine("Файл не найден");
+            }
+
+            finally
+            {
+                Console.WriteLine("Результат в файле output");
             }
         }
     }
