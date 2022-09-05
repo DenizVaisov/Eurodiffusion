@@ -29,7 +29,6 @@ namespace Eurodiffusion
         public bool IsComplete(int countryCount)
           // Город считается завершенным, когда в нем есть хотя бы одна монета каждой дневной порции
           // Страна будет выполнена если выполнены все её города 
-
           => Coins.Where(c => c.Value > 0).Count() == countryCount;
 
 

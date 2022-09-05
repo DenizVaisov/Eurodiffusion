@@ -40,8 +40,10 @@ namespace Eurodiffusion
                         Case currentCase = new();
                         for (int i = 0; i < countCountry; i++)
                         {
-                            // Считываем след строку - получаем массив строк
+                            // Считываем след строку - получаем массив строк (название страны/координаты)
                             var data = file.ReadLine().Split(' ').Where(str => str.Length > 0).ToList();
+                            if (data == null) break;
+
                             string name = data[0];
 
                             var countryCoords = new CountryRectangle

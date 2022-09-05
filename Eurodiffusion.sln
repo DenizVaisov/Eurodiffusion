@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.31911.196
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eurodiffusion", "Eurodiffusion\Eurodiffusion.csproj", "{A00C7588-2644-4A61-96DB-EE076CDB5408}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Eurodiffusion", "Eurodiffusion\Eurodiffusion.csproj", "{A00C7588-2644-4A61-96DB-EE076CDB5408}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eurodiffusion.Tests", "Eurodiffusion.Tests\Eurodiffusion.Tests.csproj", "{2746BAAC-140E-436F-99AE-B88A6BD87466}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{A00C7588-2644-4A61-96DB-EE076CDB5408}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A00C7588-2644-4A61-96DB-EE076CDB5408}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A00C7588-2644-4A61-96DB-EE076CDB5408}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2746BAAC-140E-436F-99AE-B88A6BD87466}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2746BAAC-140E-436F-99AE-B88A6BD87466}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2746BAAC-140E-436F-99AE-B88A6BD87466}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2746BAAC-140E-436F-99AE-B88A6BD87466}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

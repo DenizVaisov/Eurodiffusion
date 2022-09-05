@@ -21,7 +21,7 @@ namespace Eurodiffusion
         }
 
         /// <summary>
-        /// Начало передачи монет
+        /// Начало передачи монет (основной метод)
         /// </summary>
         public void StartCoinsTransfer() 
         {
