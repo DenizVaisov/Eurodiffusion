@@ -5,7 +5,7 @@ namespace Eurodiffusion.Models
     public class CountryComparer : IComparer<Country>
     {
         /// <summary>
-        /// Реализация метода интрерфейса IComparer для сортировки стран
+        /// Реализация метода Compare для сортировки стран
         /// </summary>
         /// <param name="x"></param>
         /// <param name="y"></param>

@@ -41,6 +41,7 @@ namespace Eurodiffusion
                         for (int i = 0; i < countCountry; i++)
                         {
                             // Считываем след строку - получаем массив строк (название страны/координаты)
+
                             var data = file.ReadLine().Split(' ').Where(str => str.Length > 0).ToList();
                             if (data == null) break;
 
@@ -83,11 +84,10 @@ namespace Eurodiffusion
 
                 using (StreamWriter writer = new StreamWriter(Consts.pathToOutputData))
                 {
-
                     foreach (var currentCase in Cases)
                     {
                         currentCase.StartCoinsTransfer();
-                        var countriesResult = currentCase.GetSortedByName();
+                        var countriesResult = currentCase.GetSortedCountries();
 
                         writer.WriteLine($"Case Number {iteration}");
                         foreach (var country in countriesResult)

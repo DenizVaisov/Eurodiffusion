@@ -8,17 +8,15 @@ namespace Eurodiffusion
     /// </summary>
     public class City
     {
-        private Dictionary<string, int> Coins { get; set; }
+        private Dictionary<string, int> Coins { get; set; } 
 
-        private Dictionary<string, int> StartDayCoinsPortion { get; set; }
+        private Dictionary<string, int> StartDayCoinsPortion { get; set; } = new();
 
-        private List<City> Neighbor { get; set; }
+        private List<City> Neighbors { get; set; } = new();
 
         public City(string countryName)
         {
             Coins = new() { [countryName] = Consts.startCityBalance };
-            StartDayCoinsPortion = new();
-            Neighbor = new();
         }
 
         /// <summary>
@@ -52,11 +50,11 @@ namespace Eurodiffusion
         /// </summary>
         public void SendCoinsToNeighborCity()
         {
-            foreach (var neighbor in Neighbor)
+            foreach (var neighbor in Neighbors)
                 neighbor.GetCoinsFromNeighborCity(StartDayCoinsPortion);
 
-            foreach (var coin in StartDayCoinsPortion)
-                Coins[coin.Key] -= Neighbor.Count * coin.Value;
+            foreach (var coinsPortion in StartDayCoinsPortion)
+                Coins[coinsPortion.Key] -= Neighbors.Count * coinsPortion.Value;
         }
 
         /// <summary>
@@ -79,6 +77,6 @@ namespace Eurodiffusion
         /// </summary>
         /// <param name="city"></param>
         public void AddNeighbor(City city)
-          => Neighbor.Add(city);
+          => Neighbors.Add(city);
     }
 }

@@ -33,6 +33,7 @@ namespace Eurodiffusion
                 isAllCountryComplete = true;
 
                 foreach (var country in Countries)
+                    // isAllCountryComplete (&=) всёравно что (isAllCountryComplete = isAllCountryComplete &)
                     isAllCountryComplete &= country.IsComplete(Countries.Count, dayToCompleteCountry);
 
                 if (isAllCountryComplete)
@@ -52,7 +53,7 @@ namespace Eurodiffusion
         /// Сортировка стран по дням выполнения и по алфавиту если количество дней одинаковое
         /// </summary>
         /// <returns></returns>
-        public List<Country> GetSortedByName()
+        public List<Country> GetSortedCountries()
         {
             CountryComparer compareCounty = new();
             var countries = Countries.ToList();

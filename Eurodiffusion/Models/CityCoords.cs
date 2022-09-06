@@ -1,7 +1,7 @@
 ﻿namespace Eurodiffusion
 {
     /// <summary>
-    /// Координаты для расстановки городов
+    /// Координаты X,Y для расстановки городов
     /// </summary>
     public struct CityCoords
     {

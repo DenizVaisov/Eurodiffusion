@@ -77,7 +77,8 @@ namespace Eurodiffusion
         /// <param name="cityNeighborCoords"></param>
         private void AddCityNeighbor(City city, CityCoords cityNeighborCoords)
         {
-            if(Cities.ContainsKey(cityNeighborCoords))
+            // Если CityCoords не будет ValueType то не попадём в условие
+            if (Cities.ContainsKey(cityNeighborCoords))
             {
                 Cities[cityNeighborCoords].AddNeighbor(city);
                 city.AddNeighbor(Cities[cityNeighborCoords]);

@@ -1,7 +1,7 @@
 ﻿namespace Eurodiffusion
 {
     /// <summary>
-    /// Координаты для стран
+    /// Координаты страны
     /// </summary>
     public class CountryRectangle
     {
