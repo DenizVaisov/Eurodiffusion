@@ -20,7 +20,7 @@ namespace Eurodiffusion.Tests
             var country = new Country(string.Empty, countryCoords);
 
             // true будет если значения координат страны не более 10
-            Assert.True(country.IsValidPosition(countryCoords));
+            Assert.True(Validation.IsValidCountryPosition(countryCoords));
         }
 
         [Fact]
@@ -32,7 +32,7 @@ namespace Eurodiffusion.Tests
             var country = new Country(name, countryCoords);
 
             // true будет если название страны не более 25 символов
-            Assert.True(country.IsValidName(name));
+            Assert.True(Validation.IsValidCountryName(name));
         }
 
         [Fact]
