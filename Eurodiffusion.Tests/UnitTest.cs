@@ -1,3 +1,4 @@
+using Eurodiffusion.Models;
 using Xunit;
 
 namespace Eurodiffusion.Tests

@@ -1,12 +1,18 @@
 ﻿using Eurodiffusion.Models;
-using System.Collections.Generic;
-using System.Linq;
+using System;
 
 namespace Eurodiffusion
 {
     public class Case
     {
-        private List<Country> Countries { get; set; } = new();
+        private Country[] countries;
+        public int CountryCount { get; set; }
+
+        public Case(int countryCount)
+        {
+            countries = new Country[countryCount];
+            CountryCount = countryCount;
+        }
 
         /// <summary>
         /// Добавление страны
@@ -14,10 +20,12 @@ namespace Eurodiffusion
         /// <param name="country"></param>
         public void AddCountry(Country country)
         {
-            foreach (var createdCountry in Countries)
-                createdCountry.AddRelationBetweenCities(country);
+            foreach (var createdCountry in countries)
+                if(createdCountry != null)
+                    createdCountry.AddRelationBetweenCities(country);
 
-            Countries.Add(country);
+            countries[CountryCount - 1] = country;
+            CountryCount--;
         }
 
         /// <summary>
@@ -32,18 +40,21 @@ namespace Eurodiffusion
             {
                 isAllCountryComplete = true;
 
-                foreach (var country in Countries)
-                    // isAllCountryComplete (&=) всёравно что (isAllCountryComplete = isAllCountryComplete &)
-                    isAllCountryComplete &= country.IsComplete(Countries.Count, dayToCompleteCountry);
+                foreach (var country in countries)
+                    if(country != null)
+                        // isAllCountryComplete (&=) всёравно что (isAllCountryComplete = isAllCountryComplete &)
+                        isAllCountryComplete &= country.IsComplete(countries.Length, dayToCompleteCountry);
 
                 if (isAllCountryComplete)
                     break;
 
-                foreach (var country in Countries)
-                    country.StartCityCoinPortion();
+                foreach (var country in countries)
+                    if (country != null)
+                        country.StartCityCoinPortion();
 
-                foreach (var country in Countries)
-                    country.SendCoinsToNeighborCity();
+                foreach (var country in countries)
+                    if (country != null)
+                        country.SendCoinsToNeighborCity();
 
                 dayToCompleteCountry++;
             }
@@ -53,12 +64,9 @@ namespace Eurodiffusion
         /// Сортировка стран по дням выполнения и по алфавиту если количество дней одинаковое
         /// </summary>
         /// <returns></returns>
-        public List<Country> GetSortedCountries()
+        public Country[] GetSortedCountries()
         {
-            CountryComparer compareCounty = new();
-            var countries = Countries.ToList();
-            countries.Sort(compareCounty);
-
+            Array.Sort(countries, new CountryComparer());
             return countries;
         }
     }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Eurodiffusion.Models;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -23,29 +24,31 @@ namespace Eurodiffusion
                 using (var file = new StreamReader(Consts.pathToInputData))
                 {
                     var str = file.ReadLine();
+                    if (str == null)
+                        throw new Exception("В файле input.txt нет данных");
 
                     while (str != null)
                     {
                         // Вначале считываем кол-во стран
 
                         if (!int.TryParse(str, out int countCountry))
-                        {
-                            Console.WriteLine("Нет данных");
-                            return;
-                        }
+                            throw new Exception("Некорректные данные для кол-ва стран");
 
-                        if (countCountry == 0 && countCountry <= Consts.maxNumberOfCountries)
-                            break;
+                        if (countCountry == 0 || countCountry >= Consts.maxNumberOfCountries)
+                            throw new Exception("Кол-во стран не соответствует ограничению от 1 до 20");
 
-                        Case currentCase = new();
+                        Case currentCase = new(countCountry);
                         for (int i = 0; i < countCountry; i++)
                         {
                             // Считываем след строку - получаем массив строк (название страны/координаты)
 
                             var data = file.ReadLine().Split(' ').Where(str => str.Length > 0).ToList();
-                            if (data == null) break;
+                            if (data == null) 
+                                throw new Exception("Нет данных для страны и координат");
 
                             string name = data[0];
+                            if (name == null || !Validation.IsValidCountryName(name))
+                                throw new Exception("Имя страны не прошло валидацию");
 
                             var countryCoords = new CountryRectangle
                             {
@@ -54,6 +57,10 @@ namespace Eurodiffusion
                                 xh = int.Parse(data[3]),
                                 yh = int.Parse(data[4]),
                             };
+
+                            if (!Validation.IsValidCountryPosition(countryCoords))
+                                throw new Exception($"Координаты xl: {countryCoords.xl} xh: {countryCoords.xh} yl: {countryCoords.yl} yh: {countryCoords.yh}" +
+                                    $" не подходят по ограничениям 1 <= xl <= xh <= {Consts.coordMax} или 1 <= yl <= yh <= {Consts.coordMax}");
 
                             currentCase.AddCountry(new Country(name, countryCoords));
                         }
@@ -66,13 +73,7 @@ namespace Eurodiffusion
 
             catch(FileNotFoundException)
             {
-                Console.WriteLine("Файл не найден");
-                return;
-            }
-
-            finally
-            {
-                Console.WriteLine();
+                throw new Exception("Файл input.txt не найден");
             }
         }
 
@@ -100,12 +101,12 @@ namespace Eurodiffusion
 
             catch (FileNotFoundException)
             {
-                Console.WriteLine("Файл не найден");
+                throw new Exception("Файл output.txt не найден");
             }
 
             finally
             {
-                Console.WriteLine("Результат в файле output");
+                Console.WriteLine("Результат в файле output.txt");
             }
         }
     }

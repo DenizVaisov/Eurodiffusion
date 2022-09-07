@@ -1,6 +1,6 @@
 ﻿using System.IO;
 
-namespace Eurodiffusion
+namespace Eurodiffusion.Models
 {
     /// <summary>
     /// Константы

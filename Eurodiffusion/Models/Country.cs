@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
-namespace Eurodiffusion
+namespace Eurodiffusion.Models
 {
     /// <summary>
     /// Сущность представляющая страны
@@ -32,26 +32,7 @@ namespace Eurodiffusion
         {
             for (int x = coords.xl; x <= coords.xh; x++)
                 for (int y = coords.yl; y <= coords.yh; y++)
-                    if (IsValidPosition(coords) && IsValidName(Name))
-                        AddCity(new City(Name), new CityCoords(x, y));
-        }
-
-        /// <summary>
-        /// Проверка на ограничения в расстановке городов
-        /// </summary>
-        /// <param name="countryRectangle"></param>
-        /// <returns></returns>
-        public bool IsValidPosition(CountryRectangle countryRectangle)
-        {
-            if (countryRectangle.xl >= Consts.coordMin
-                && countryRectangle.xl <= countryRectangle.xh
-                && countryRectangle.xh <= Consts.coordMax
-                && countryRectangle.yl >= Consts.coordMin
-                && countryRectangle.yl <= countryRectangle.yh
-                && countryRectangle.yh <= Consts.coordMax)
-                return true;
-
-            return false;
+                    AddCity(new City(Name), new CityCoords(x, y));
         }
 
         /// <summary>
@@ -118,19 +99,7 @@ namespace Eurodiffusion
                 city.Value.SendCoinsToNeighborCity();
         }
 
-        /// <summary>
-        /// Проверка на валидность названия страны
-        /// </summary>
-        /// <param name="countryName"></param>
-        /// <returns></returns>
-        public bool IsValidName(string countryName)
-        {
-            if (countryName.Length <= Consts.countryNameLength)
-                return true;
-
-            return false;
-        }
-
+      
         /// <summary>
         /// Проверка на выполнение страны
         /// </summary>

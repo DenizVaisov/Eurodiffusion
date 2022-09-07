@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
-namespace Eurodiffusion
+namespace Eurodiffusion.Models
 {
     /// <summary>
     /// Сущность представляющая города
@@ -28,7 +28,6 @@ namespace Eurodiffusion
           // Город считается завершенным, когда в нем есть хотя бы одна монета каждой дневной порции
           // Страна будет выполнена если выполнены все её города 
           => Coins.Where(c => c.Value > 0).Count() == countryCount;
-
 
         /// <summary>
         /// Дневная порция монет для каждого города

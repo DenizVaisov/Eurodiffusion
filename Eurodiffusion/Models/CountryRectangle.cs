@@ -1,4 +1,4 @@
-﻿namespace Eurodiffusion
+﻿namespace Eurodiffusion.Models
 {
     /// <summary>
     /// Координаты страны
