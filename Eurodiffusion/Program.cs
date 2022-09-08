@@ -1,8 +1,7 @@
-﻿using Eurodiffusion.Models;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
+using Eurodiffusion.Models;
 
 namespace Eurodiffusion
 {
@@ -30,7 +29,6 @@ namespace Eurodiffusion
                     while (str != null)
                     {
                         // Вначале считываем кол-во стран
-
                         if (!int.TryParse(str, out int countCountry))
                             throw new Exception("Некорректные данные для кол-ва стран");
 
@@ -41,8 +39,7 @@ namespace Eurodiffusion
                         for (int i = 0; i < countCountry; i++)
                         {
                             // Считываем след строку - получаем массив строк (название страны/координаты)
-
-                            var data = file.ReadLine().Split(' ').Where(str => str.Length > 0).ToList();
+                            var data = file.ReadLine().Split(' ');
                             if (data == null) 
                                 throw new Exception("Нет данных для страны и координат");
 
@@ -106,7 +103,7 @@ namespace Eurodiffusion
 
             finally
             {
-                Console.WriteLine("Результат в файле output.txt");
+                Console.Write("Результат в файле output.txt");
             }
         }
     }

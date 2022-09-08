@@ -111,9 +111,8 @@ namespace Eurodiffusion.Models
             if (DaysToComplete > 0)
                 return true;
 
-            // Город считается завершенным, когда в нем есть хотя бы одна монета каждой дневной порции
-            // Страна будет выполнена если выполнены все её города 
-
+            /// <summary> Город считается завершенным, когда в нем есть хотя бы одна монета каждой дневной порции
+            /// Страна будет выполнена если выполнены все её города </summary>
             int citiesCount = Cities.Where(city => city.Value.IsComplete(countCountry)).Count();
 
             if (Cities.Count == citiesCount)

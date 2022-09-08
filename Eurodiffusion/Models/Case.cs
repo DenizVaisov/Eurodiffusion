@@ -1,7 +1,5 @@
-﻿using Eurodiffusion.Models;
-using System;
-
-namespace Eurodiffusion
+﻿using System;
+namespace Eurodiffusion.Models
 {
     public class Case
     {

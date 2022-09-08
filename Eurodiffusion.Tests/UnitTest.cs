@@ -17,8 +17,6 @@ namespace Eurodiffusion.Tests
                 yh = 8,
             };
 
-            var country = new Country(string.Empty, countryCoords);
-
             // true будет если значения координат страны не более 10
             Assert.True(Validation.IsValidCountryPosition(countryCoords));
         }
@@ -27,9 +25,6 @@ namespace Eurodiffusion.Tests
         public void Test_For_Valid_Country_Name()
         {
             string name = "1222222222222222222223d";
-
-            var countryCoords = new CountryRectangle();
-            var country = new Country(name, countryCoords);
 
             // true будет если название страны не более 25 символов
             Assert.True(Validation.IsValidCountryName(name));

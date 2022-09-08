@@ -14,6 +14,8 @@ namespace Eurodiffusion.Models
 
         private List<City> Neighbors { get; set; } = new();
 
+        public CityCoords Coords { get; set; }
+
         public City(string countryName)
         {
             Coins = new() { [countryName] = Consts.startCityBalance };
@@ -38,7 +40,6 @@ namespace Eurodiffusion.Models
             {
                 if (StartDayCoinsPortion.ContainsKey(coin.Key))
                     StartDayCoinsPortion[coin.Key] = coin.Value / Consts.cityDayPortion;
-                
                 else
                     StartDayCoinsPortion.Add(coin.Key, coin.Value / Consts.cityDayPortion);
             }
