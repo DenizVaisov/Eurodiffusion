@@ -17,6 +17,8 @@ namespace Eurodiffusion.Models
 
         public const int coordMax = 10;
 
+        public const int maxNeighborsCount = 4;
+
         public const int countryNameLength = 25;
 
         public static string pathToInputData = Path.Combine(Directory.GetCurrentDirectory(), @"..\..\..\Data\input.txt");

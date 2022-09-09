@@ -41,7 +41,7 @@ namespace Eurodiffusion.Models
                 foreach (var country in countries)
                     if(country != null)
                         // isAllCountryComplete (&=) всёравно что (isAllCountryComplete = isAllCountryComplete &)
-                        isAllCountryComplete &= country.IsComplete(countries.Length, dayToCompleteCountry);
+                        isAllCountryComplete &= country.IsCheck(countries.Length, dayToCompleteCountry);
 
                 if (isAllCountryComplete)
                     break;
@@ -55,6 +55,7 @@ namespace Eurodiffusion.Models
                         country.SendCoinsToNeighborCity();
 
                 dayToCompleteCountry++;
+                //Console.WriteLine(isAllCountryComplete);
             }
         }
 
@@ -64,7 +65,7 @@ namespace Eurodiffusion.Models
         /// <returns></returns>
         public Country[] GetSortedCountries()
         {
-            Array.Sort(countries, new CountryComparer());
+            Array.Sort(countries, new Country());
             return countries;
         }
     }

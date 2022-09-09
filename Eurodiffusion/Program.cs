@@ -32,7 +32,7 @@ namespace Eurodiffusion
                         if (!int.TryParse(str, out int countCountry))
                             throw new Exception("Некорректные данные для кол-ва стран");
 
-                        if (countCountry == 0 || countCountry >= Consts.maxNumberOfCountries)
+                        if (countCountry == 0 || countCountry > Consts.maxNumberOfCountries)
                             throw new Exception("Кол-во стран не соответствует ограничению от 1 до 20");
 
                         Case currentCase = new(countCountry);
@@ -44,22 +44,23 @@ namespace Eurodiffusion
                                 throw new Exception("Нет данных для страны и координат");
 
                             string name = data[0];
-                            if (name == null || !Validation.IsValidCountryName(name))
+                            Country country = new(name);
+
+                            if (name == null || !country.IsValidCountryName(name))
                                 throw new Exception("Имя страны не прошло валидацию");
 
-                            var countryCoords = new CountryRectangle
-                            {
-                                xl = int.Parse(data[1]),
-                                yl = int.Parse(data[2]),
-                                xh = int.Parse(data[3]),
-                                yh = int.Parse(data[4]),
-                            };
+                            int xl = int.Parse(data[1]);
+                            int yl = int.Parse(data[2]);
+                            int xh = int.Parse(data[3]);
+                            int yh = int.Parse(data[4]);
 
-                            if (!Validation.IsValidCountryPosition(countryCoords))
-                                throw new Exception($"Координаты xl: {countryCoords.xl} xh: {countryCoords.xh} yl: {countryCoords.yl} yh: {countryCoords.yh}" +
-                                    $" не подходят по ограничениям 1 <= xl <= xh <= {Consts.coordMax} или 1 <= yl <= yh <= {Consts.coordMax}");
+                            CountryCoords coords = new(xl, yl, xh, yh);
+                            if (!country.IsValidCountryPosition(xl, yl, xh, yh))
+                                throw new Exception($"Координаты xl: {xl} xh: {xh} yl: {yl} yh: {yh} не подходят по ограничениям " +
+                                    $"1 <= xl <= xh <= {Consts.coordMax} или 1 <= yl <= yh <= {Consts.coordMax}");
 
-                            currentCase.AddCountry(new Country(name, countryCoords));
+                            country.SetCityCoordinates(coords);
+                            currentCase.AddCountry(country);
                         }
 
                         Cases.Add(currentCase);

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Eurodiffusion.Models
@@ -6,7 +7,7 @@ namespace Eurodiffusion.Models
     /// <summary>
     /// Сущность представляющая страны
     /// </summary>
-    public class Country
+    public class Country : IComparer<Country>
     {
         public string Name { get; set; }
 
@@ -17,21 +18,20 @@ namespace Eurodiffusion.Models
 
         private Dictionary<CityCoords, City> Cities { get; set; }
 
-        public Country(string name, CountryRectangle coords)
+        public Country(string name = null)
         {
             Name = name;
             Cities = new();
-            SetCityCoordinates(coords);
         }
 
         /// <summary>
         /// Растановка городов по координатам страны
         /// </summary>
         /// <param name="coords"></param>
-        public void SetCityCoordinates(CountryRectangle coords)
+        public void SetCityCoordinates(CountryCoords coords)
         {
-            for (int x = coords.xl; x <= coords.xh; x++)
-                for (int y = coords.yl; y <= coords.yh; y++)
+            for (int x = coords.Xl; x <= coords.Xh; x++)
+                for (int y = coords.Yl; y <= coords.Yh; y++)
                     AddCity(new City(Name), new CityCoords(x, y));
         }
 
@@ -49,6 +49,8 @@ namespace Eurodiffusion.Models
             AddCityNeighbor(city, new CityCoords(coords.X - 1, coords.Y));
             AddCityNeighbor(city, new CityCoords(coords.X, coords.Y + 1));
             AddCityNeighbor(city, new CityCoords(coords.X, coords.Y - 1));
+
+            Console.WriteLine($"Кол-во городов {Name} {Cities.Count}");
         }
 
         /// <summary>
@@ -81,6 +83,16 @@ namespace Eurodiffusion.Models
             }
         }
 
+        public int Compare(Country x, Country y)
+        {
+            // Сортировка по возрастанию
+            if (x.DaysToComplete != y.DaysToComplete)
+                return x.DaysToComplete - y.DaysToComplete;
+
+            // Cортировка по алфавиту
+            return x.Name.CompareTo(y.Name);
+        }
+
         /// <summary>
         /// Начало раздачи дневной порции монет для каждого города
         /// </summary>
@@ -99,14 +111,40 @@ namespace Eurodiffusion.Models
                 city.Value.SendCoinsToNeighborCity();
         }
 
-      
         /// <summary>
-        /// Проверка на выполнение страны
+        /// Ограничения в расстановке городов
+        /// </summary>
+        /// <param name="countryRectangle"></param>
+        /// <returns></returns>
+        public bool IsValidCountryPosition(int xl, int yl, int xh, int yh)
+        {
+            if (xl >= Consts.coordMin && xl <= xh && xh <= Consts.coordMax
+                && yl >= Consts.coordMin && yl <= yh && yh <= Consts.coordMax)
+                return true;
+
+            return false;
+        }
+
+        /// <summary>
+        /// Валидность названия страны
+        /// </summary>
+        /// <param name="countryName"></param>
+        /// <returns></returns>
+        public bool IsValidCountryName(string countryName)
+        {
+            if (countryName.Length <= Consts.countryNameLength)
+                return true;
+
+            return false;
+        }
+
+        /// <summary>
+        /// Страна выполнена, если выполнены все её города
         /// </summary>
         /// <param name="countCountry"></param>
         /// <param name="dayToCompleteCountry"></param>
         /// <returns></returns>
-        public bool IsComplete(int countCountry, int dayToCompleteCountry)
+        public bool IsCheck(int countCountry, int dayToCompleteCountry)
         {
             if (DaysToComplete > 0)
                 return true;
@@ -115,7 +153,7 @@ namespace Eurodiffusion.Models
             /// Страна будет выполнена если выполнены все её города </summary>
             int citiesCount = Cities.Where(city => city.Value.IsComplete(countCountry)).Count();
 
-            if (Cities.Count == citiesCount)
+            if (Cities.Count == citiesCount && citiesCount > 0)
             {
                 DaysToComplete = dayToCompleteCountry;
                 return true;
