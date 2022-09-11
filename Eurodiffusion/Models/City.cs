@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 
 namespace Eurodiffusion.Models
 {
@@ -8,20 +7,28 @@ namespace Eurodiffusion.Models
     /// </summary>
     public class City
     {
-        private Dictionary<string, int> Coins { get; set; } 
-
-        private Dictionary<string, int> StartDayCoinsPortion { get; set; } = new();
-
-        //private List<City> Neighbors { get; set; } = new();
         private City[] Neighbors { get; set; }
+
+        public CityCoords Coords { get; set; }
 
         private int NeighborsCount { get; set; }
 
-        public City(string countryName)
+        private readonly int[] totalBalance;
+
+        private readonly int[] dailyIncome;
+
+        private readonly int[] dailyExpenses;
+
+        public City(string countryName, int count, int currentCountryIndex)
         {
-            Coins = new() { [countryName] = Consts.startCityBalance };
-            NeighborsCount = Consts.maxNumberOfCountries;
+            totalBalance = new int[count];
+            dailyIncome = new int[count];
+            dailyExpenses = new int[count];
+
+            NeighborsCount = Consts.maxNeighborsCount;
             Neighbors = new City[NeighborsCount];
+
+            totalBalance[currentCountryIndex] = Consts.startCityBalance;
         }
 
         /// <summary>
@@ -29,11 +36,11 @@ namespace Eurodiffusion.Models
         /// </summary>
         /// <param name="countryCount"></param>
         /// <returns></returns>
-        public bool IsComplete(int countryCount)
+        public bool IsComplete()
         { 
             // Город считается завершенным, когда в нем есть хотя бы одна монета каждой дневной порции
             // Страна будет выполнена если выполнены все её города 
-            bool isCountryComplete = Coins.Where(c => c.Value > 0).Count() == countryCount;
+            bool isCountryComplete = totalBalance.All(c => c != 0);
             return isCountryComplete;
         }
 
@@ -42,44 +49,32 @@ namespace Eurodiffusion.Models
         /// </summary>
         public void CoinsDayPortion()
         {
-            foreach (var coin in Coins)
+            for (int i = 0; i < totalBalance.Length; i++)
             {
-                if (StartDayCoinsPortion.ContainsKey(coin.Key))
-                    StartDayCoinsPortion[coin.Key] = coin.Value / Consts.cityDayPortion;
-                else
-                    StartDayCoinsPortion.Add(coin.Key, coin.Value / Consts.cityDayPortion);
+                var monetsCount = totalBalance[i] / Consts.cityDayPortion;
+
+                foreach (var city in Neighbors.Where(w => w != null))
+                {
+                    dailyExpenses[i] += monetsCount;
+                    city.Fill(i, monetsCount);
+                }
             }
         }
+
+        private void Fill(int countryId, int monetsCount) => dailyIncome[countryId] += monetsCount;
 
         /// <summary>
         /// Отправление монет соседнему городу
         /// </summary>
         public void SendCoinsToNeighborCity()
         {
-            int neighborsCount = Neighbors.Where(w => w != null).Count();
-
-            foreach (var neighbor in Neighbors.Where(w => w != null))
-                neighbor.GetCoinsFromNeighborCity(StartDayCoinsPortion);
-
-            foreach (var coinsPortion in StartDayCoinsPortion)
-                Coins[coinsPortion.Key] -= neighborsCount * coinsPortion.Value;
-        }
-
-        /// <summary>
-        /// Получение монет соседним городом
-        /// </summary>
-        /// <param name="coins"></param>
-        public void GetCoinsFromNeighborCity(Dictionary<string, int> coins)
-        {
-            foreach (var coin in coins)
+            for (int i = 0; i < totalBalance.Length; i++)
             {
-                if (Coins.ContainsKey(coin.Key))
-                    Coins[coin.Key] += coin.Value;
-                else
-                    Coins.Add(coin.Key, coin.Value);
-            }
+                totalBalance[i] += dailyIncome[i] - dailyExpenses[i];
 
-            System.Console.WriteLine("Кол-во монет" + " " + Coins.Count);
+                dailyIncome[i] = 0;
+                dailyExpenses[i] = 0;
+            }
         }
 
         /// <summary>
@@ -88,7 +83,6 @@ namespace Eurodiffusion.Models
         /// <param name="city"></param>
         public void AddNeighbor(City city)
         {
-            //Neighbors.Add(city);
             Neighbors[NeighborsCount - 1] = city;
             NeighborsCount--;
         }

@@ -18,6 +18,19 @@ namespace Eurodiffusion.Models
 
         private Dictionary<CityCoords, City> Cities { get; set; }
 
+        public int Count { get; set; }
+
+        public static int CountryIndex { get; set; }
+
+        public int CurrentIndex { get; set; }
+
+        public bool IsComplete { get; set; }
+
+        static Country()
+        {
+            CountryIndex = 0;
+        }
+
         public Country(string name = null)
         {
             Name = name;
@@ -32,7 +45,7 @@ namespace Eurodiffusion.Models
         {
             for (int x = coords.Xl; x <= coords.Xh; x++)
                 for (int y = coords.Yl; y <= coords.Yh; y++)
-                    AddCity(new City(Name), new CityCoords(x, y));
+                    AddCity(new City(Name, Count, CurrentIndex), new CityCoords(x, y));
         }
 
         /// <summary>
@@ -138,28 +151,16 @@ namespace Eurodiffusion.Models
             return false;
         }
 
-        /// <summary>
-        /// Страна выполнена, если выполнены все её города
-        /// </summary>
-        /// <param name="countCountry"></param>
-        /// <param name="dayToCompleteCountry"></param>
-        /// <returns></returns>
-        public bool IsCheck(int countCountry, int dayToCompleteCountry)
+        public bool CheckCompletion(int days)
         {
-            if (DaysToComplete > 0)
-                return true;
-
-            /// <summary> Город считается завершенным, когда в нем есть хотя бы одна монета каждой дневной порции
-            /// Страна будет выполнена если выполнены все её города </summary>
-            int citiesCount = Cities.Where(city => city.Value.IsComplete(countCountry)).Count();
-
-            if (Cities.Count == citiesCount && citiesCount > 0)
+            if (!IsComplete && Cities.Values.All(value => value.IsComplete()))
             {
-                DaysToComplete = dayToCompleteCountry;
-                return true;
+                DaysToComplete = days;
+                IsComplete = true;
+                return IsComplete;
             }
 
-            return false;
+            return IsComplete;
         }
     }
 

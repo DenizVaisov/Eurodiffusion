@@ -45,6 +45,8 @@ namespace Eurodiffusion
 
                             string name = data[0];
                             Country country = new(name);
+                            country.Count = countCountry;
+                            country.CurrentIndex = i;
 
                             if (name == null || !country.IsValidCountryName(name))
                                 throw new Exception("Имя страны не прошло валидацию");

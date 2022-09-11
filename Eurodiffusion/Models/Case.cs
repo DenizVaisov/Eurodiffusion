@@ -39,9 +39,8 @@ namespace Eurodiffusion.Models
                 isAllCountryComplete = true;
 
                 foreach (var country in countries)
-                    if(country != null)
-                        // isAllCountryComplete (&=) всёравно что (isAllCountryComplete = isAllCountryComplete &)
-                        isAllCountryComplete &= country.IsCheck(countries.Length, dayToCompleteCountry);
+                    if (country != null)
+                        isAllCountryComplete = country.CheckCompletion(dayToCompleteCountry);
 
                 if (isAllCountryComplete)
                     break;

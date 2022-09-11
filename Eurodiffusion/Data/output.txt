@@ -7,9 +7,3 @@ Case Number 2
 Case Number 3
 	 Belgium 2
 	 Netherlands 2
-Case Number 4
-	 Portugal 49
-	 Russia 107
-	 France 348
-	 Italy 348
-	 Spain 381
