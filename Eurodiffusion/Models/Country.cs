@@ -16,7 +16,9 @@ namespace Eurodiffusion.Models
         /// </summary>
         public int DaysToComplete { get; private set; }
 
-        private Dictionary<CityCoords, City> Cities { get; set; }
+        public CityCoords[] CitiesCoords { get; set; }
+
+        public City[] Cities { get; set; }
 
         public int Count { get; set; }
 
@@ -26,6 +28,8 @@ namespace Eurodiffusion.Models
 
         public bool IsComplete { get; set; }
 
+        public int CitiesCount { get; set; }
+
         static Country()
         {
             CountryIndex = 0;
@@ -34,7 +38,6 @@ namespace Eurodiffusion.Models
         public Country(string name = null)
         {
             Name = name;
-            Cities = new();
         }
 
         /// <summary>
@@ -43,6 +46,16 @@ namespace Eurodiffusion.Models
         /// <param name="coords"></param>
         public void SetCityCoordinates(CountryCoords coords)
         {
+            int capacity = 0;
+
+            for (int x = coords.Xl; x <= coords.Xh; x++)
+                for (int y = coords.Yl; y <= coords.Yh; y++)
+                    capacity++;
+
+            Cities = new City[capacity];
+            CitiesCoords = new CityCoords[capacity];
+            CitiesCount = capacity;
+
             for (int x = coords.Xl; x <= coords.Xh; x++)
                 for (int y = coords.Yl; y <= coords.Yh; y++)
                     AddCity(new City(Name, Count, CurrentIndex), new CityCoords(x, y));
@@ -55,15 +68,17 @@ namespace Eurodiffusion.Models
         /// <param name="coords"></param>
         public void AddCity(City city, CityCoords coords)
         {
-            Cities.Add(coords, city);
+            Cities[CitiesCount - 1] = city;
+            CitiesCoords[CitiesCount - 1] = coords;
+            CitiesCount--;
+
+            city.Coords = coords;
 
             // У города может быть до 4-ех соседей
             AddCityNeighbor(city, new CityCoords(coords.X + 1, coords.Y));
             AddCityNeighbor(city, new CityCoords(coords.X - 1, coords.Y));
             AddCityNeighbor(city, new CityCoords(coords.X, coords.Y + 1));
             AddCityNeighbor(city, new CityCoords(coords.X, coords.Y - 1));
-
-            Console.WriteLine($"Кол-во городов {Name} {Cities.Count}");
         }
 
         /// <summary>
@@ -74,10 +89,13 @@ namespace Eurodiffusion.Models
         private void AddCityNeighbor(City city, CityCoords cityNeighborCoords)
         {
             // Если CityCoords не будет ValueType то не попадём в условие
-            if (Cities.ContainsKey(cityNeighborCoords))
+            if (CitiesCoords.Contains(cityNeighborCoords))
             {
-                Cities[cityNeighborCoords].AddNeighbor(city);
-                city.AddNeighbor(Cities[cityNeighborCoords]);
+                var tempCity = Cities.Where(w => w != null && w.Coords.X == cityNeighborCoords.X
+                               && w.Coords.Y == cityNeighborCoords.Y).FirstOrDefault();
+
+                tempCity.AddNeighbor(city);
+                city.AddNeighbor(tempCity);
             }
         }
 
@@ -85,14 +103,17 @@ namespace Eurodiffusion.Models
         /// Добавление отношения между городами страны
         /// </summary>
         /// <param name="country"></param>
-        public void AddRelationBetweenCities(Country country) 
+        public void AddRelationBetweenCities(Country country)
         {
-            foreach (var city in country.Cities)
+            for (int i = 0; i < country.Cities.Length; i++)
             {
-                AddCityNeighbor(city.Value, new CityCoords(city.Key.X + 1, city.Key.Y));
-                AddCityNeighbor(city.Value, new CityCoords(city.Key.X - 1, city.Key.Y));
-                AddCityNeighbor(city.Value, new CityCoords(city.Key.X, city.Key.Y + 1));
-                AddCityNeighbor(city.Value, new CityCoords(city.Key.X, city.Key.Y - 1));
+                City city = country.Cities[i];
+                CityCoords coords = country.CitiesCoords[i];
+
+                AddCityNeighbor(city, new CityCoords(coords.X + 1, coords.Y));
+                AddCityNeighbor(city, new CityCoords(coords.X - 1, coords.Y));
+                AddCityNeighbor(city, new CityCoords(coords.X, coords.Y + 1));
+                AddCityNeighbor(city, new CityCoords(coords.X, coords.Y - 1));
             }
         }
 
@@ -109,10 +130,11 @@ namespace Eurodiffusion.Models
         /// <summary>
         /// Начало раздачи дневной порции монет для каждого города
         /// </summary>
-        public void StartCityCoinPortion() 
+        public void StartCityCoinPortion()
         {
             foreach (var city in Cities)
-                city.Value.CoinsDayPortion();
+                if(city != null)
+                    city.CoinsDayPortion();
         }
 
         /// <summary>
@@ -121,7 +143,8 @@ namespace Eurodiffusion.Models
         public void SendCoinsToNeighborCity()
         {
             foreach (var city in Cities)
-                city.Value.SendCoinsToNeighborCity();
+                if (city != null)
+                    city.SendCoinsToNeighborCity();
         }
 
         /// <summary>
@@ -153,7 +176,7 @@ namespace Eurodiffusion.Models
 
         public bool CheckCompletion(int days)
         {
-            if (!IsComplete && Cities.Values.All(value => value.IsComplete()))
+            if (!IsComplete && Cities.All(value => value.IsComplete()))
             {
                 DaysToComplete = days;
                 IsComplete = true;

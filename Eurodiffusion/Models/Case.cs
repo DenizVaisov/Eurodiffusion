@@ -54,7 +54,6 @@ namespace Eurodiffusion.Models
                         country.SendCoinsToNeighborCity();
 
                 dayToCompleteCountry++;
-                //Console.WriteLine(isAllCountryComplete);
             }
         }
 
